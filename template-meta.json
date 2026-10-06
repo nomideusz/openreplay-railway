@@ -1,0 +1,8 @@
+{
+  "name": "OpenReplay | Open-Source Session Replay, FullStory and LogRocket Alternative",
+  "short_name": "OpenReplay",
+  "description": "Self-hosted session replay, product analytics and DevTools for your web app",
+  "category": "Observability",
+  "image": "https://cdn.jsdelivr.net/gh/nomideusz/openreplay-railway/icon.svg",
+  "card_desc": "OpenReplay session replay: watch what users did with console, network and performance data alongside, plus funnels, heatmaps and dashboards, with recordings kept on your own Railway volume."
+}

@@ -1,0 +1,444 @@
+{
+  "services": {
+    "547c49a2-5351-47f0-9998-c16927e5681b": {
+      "icon": "https://cdn.jsdelivr.net/gh/nomideusz/openreplay-railway/icon.svg",
+      "name": "OpenReplay",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/nomideusz/openreplay-railway",
+        "rootDirectory": "/gateway"
+      },
+      "networking": {
+        "serviceDomains": {
+          "<hasDomain>": {}
+        }
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "8080",
+          "description": "Port the gateway listens on - leave as is",
+          "isOptional": false
+        },
+        "BACKEND_HOST": {
+          "defaultValue": "${{Backend.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Go services (ingest, Go API, canvases) on the private network",
+          "isOptional": false
+        },
+        "CHALICE_HOST": {
+          "defaultValue": "${{API.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Python API on the private network",
+          "isOptional": false
+        },
+        "STORAGE_HOST": {
+          "defaultValue": "${{Storage.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Object storage on the private network, for signed recording downloads",
+          "isOptional": false
+        }
+      }
+    },
+    "fe96504c-c6a9-459d-afa7-506450eb0ac0": {
+      "icon": "https://cdn.jsdelivr.net/gh/nomideusz/openreplay-railway/icon.svg",
+      "name": "Backend",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": null,
+        "restartPolicyType": "ALWAYS",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/nomideusz/openreplay-railway",
+        "rootDirectory": "/backend"
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "variables": {
+        "POSTGRES_STRING": {
+          "defaultValue": "postgres://${{Postgres.POSTGRES_USER}}:${{Postgres.POSTGRES_PASSWORD}}@${{Postgres.RAILWAY_PRIVATE_DOMAIN}}:5432/${{Postgres.POSTGRES_DB}}?sslmode=disable",
+          "description": "Postgres on the private network",
+          "isOptional": false
+        },
+        "pg_password": {
+          "defaultValue": "${{Postgres.POSTGRES_PASSWORD}}",
+          "description": "Postgres password (read separately by some services)",
+          "isOptional": false
+        },
+        "REDIS_STRING": {
+          "defaultValue": "redis://default:${{Redis.REDIS_PASSWORD}}@${{Redis.RAILWAY_PRIVATE_DOMAIN}}:6379",
+          "description": "Redis on the private network - carries the ingest queues as Redis streams",
+          "isOptional": false
+        },
+        "CLICKHOUSE_STRING": {
+          "defaultValue": "${{ClickHouse.RAILWAY_PRIVATE_DOMAIN}}:9000/default",
+          "description": "ClickHouse native protocol on the private network",
+          "isOptional": false
+        },
+        "CLICKHOUSE_HTTP_STRING": {
+          "defaultValue": "${{ClickHouse.RAILWAY_PRIVATE_DOMAIN}}:8123/default",
+          "description": "ClickHouse HTTP interface on the private network",
+          "isOptional": false
+        },
+        "CLICKHOUSE_USERNAME": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_USER}}",
+          "description": "ClickHouse user",
+          "isOptional": false
+        },
+        "CLICKHOUSE_PASSWORD": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_PASSWORD}}",
+          "description": "ClickHouse password",
+          "isOptional": false
+        },
+        "CH_USERNAME": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_USER}}",
+          "description": "ClickHouse user (legacy name some services read)",
+          "isOptional": false
+        },
+        "CH_PASSWORD": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_PASSWORD}}",
+          "description": "ClickHouse password (legacy name some services read)",
+          "isOptional": false
+        },
+        "AWS_ACCESS_KEY_ID": {
+          "defaultValue": "${{Storage.RUSTFS_ACCESS_KEY}}",
+          "description": "Object storage access key",
+          "isOptional": false
+        },
+        "AWS_SECRET_ACCESS_KEY": {
+          "defaultValue": "${{Storage.RUSTFS_SECRET_KEY}}",
+          "description": "Object storage secret key",
+          "isOptional": false
+        },
+        "S3_INTERNAL": {
+          "defaultValue": "http://${{Storage.RAILWAY_PRIVATE_DOMAIN}}:9000",
+          "description": "Object storage on the private network - recordings are uploaded here",
+          "isOptional": false
+        },
+        "S3_PUBLIC": {
+          "defaultValue": "https://${{OpenReplay.RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Public URL that signed download links point at - the gateway routes them to object storage",
+          "isOptional": false
+        },
+        "ASSETS_ORIGIN": {
+          "defaultValue": "https://${{OpenReplay.RAILWAY_PUBLIC_DOMAIN}}/sessions-assets",
+          "description": "Public URL of the cached page assets (CSS, fonts, images) the player loads",
+          "isOptional": false
+        },
+        "JWT_SECRET": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Signs dashboard sessions - shared with the API service",
+          "isOptional": false
+        },
+        "JWT_SPOT_SECRET": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Signs Spot sessions - shared with the API service",
+          "isOptional": false
+        },
+        "TOKEN_SECRET": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Signs tracker session tokens",
+          "isOptional": false
+        },
+        "ASSIST_JWT_SECRET": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Assist token secret - shared with the API service",
+          "isOptional": false
+        },
+        "ASSIST_KEY": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Assist key - shared with the API service",
+          "isOptional": false
+        }
+      },
+      "volumeMounts": {
+        "1a701e0a-2079-4db8-a8ec-340aa6a3d628": {
+          "mountPath": "/mnt/efs"
+        }
+      }
+    },
+    "b2e772fa-68d7-4925-8dbc-3fe7cb70c48e": {
+      "icon": "https://cdn.jsdelivr.net/gh/nomideusz/openreplay-railway/icon.svg",
+      "name": "API",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/nomideusz/openreplay-railway",
+        "rootDirectory": "/chalice"
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "variables": {
+        "pg_host": {
+          "defaultValue": "${{Postgres.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Postgres on the private network",
+          "isOptional": false
+        },
+        "pg_dbname": {
+          "defaultValue": "${{Postgres.POSTGRES_DB}}",
+          "description": "Postgres database",
+          "isOptional": false
+        },
+        "pg_user": {
+          "defaultValue": "${{Postgres.POSTGRES_USER}}",
+          "description": "Postgres user",
+          "isOptional": false
+        },
+        "pg_password": {
+          "defaultValue": "${{Postgres.POSTGRES_PASSWORD}}",
+          "description": "Postgres password",
+          "isOptional": false
+        },
+        "ch_host": {
+          "defaultValue": "${{ClickHouse.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "ClickHouse on the private network",
+          "isOptional": false
+        },
+        "ch_user": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_USER}}",
+          "description": "ClickHouse user",
+          "isOptional": false
+        },
+        "ch_password": {
+          "defaultValue": "${{ClickHouse.CLICKHOUSE_PASSWORD}}",
+          "description": "ClickHouse password",
+          "isOptional": false
+        },
+        "REDIS_STRING": {
+          "defaultValue": "redis://default:${{Redis.REDIS_PASSWORD}}@${{Redis.RAILWAY_PRIVATE_DOMAIN}}:6379",
+          "description": "Redis on the private network",
+          "isOptional": false
+        },
+        "JWT_SECRET": {
+          "defaultValue": "${{Backend.JWT_SECRET}}",
+          "description": "Same secret as the Backend service",
+          "isOptional": false
+        },
+        "JWT_SPOT_SECRET": {
+          "defaultValue": "${{Backend.JWT_SPOT_SECRET}}",
+          "description": "Same secret as the Backend service",
+          "isOptional": false
+        },
+        "JWT_REFRESH_SECRET": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Signs refresh tokens",
+          "isOptional": false
+        },
+        "JWT_SPOT_REFRESH_SECRET": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Signs Spot refresh tokens",
+          "isOptional": false
+        },
+        "ASSIST_JWT_SECRET": {
+          "defaultValue": "${{Backend.ASSIST_JWT_SECRET}}",
+          "description": "Same secret as the Backend service",
+          "isOptional": false
+        },
+        "ASSIST_KEY": {
+          "defaultValue": "${{Backend.ASSIST_KEY}}",
+          "description": "Same key as the Backend service",
+          "isOptional": false
+        },
+        "SITE_URL": {
+          "defaultValue": "https://${{OpenReplay.RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Public dashboard URL, used in emails and links - set it to your custom domain after adding one",
+          "isOptional": false
+        },
+        "S3_HOST": {
+          "defaultValue": "https://${{OpenReplay.RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Public URL that signed recording links point at - routed to object storage by the gateway",
+          "isOptional": false
+        },
+        "S3_KEY": {
+          "defaultValue": "${{Storage.RUSTFS_ACCESS_KEY}}",
+          "description": "Object storage access key",
+          "isOptional": false
+        },
+        "S3_SECRET": {
+          "defaultValue": "${{Storage.RUSTFS_SECRET_KEY}}",
+          "description": "Object storage secret key",
+          "isOptional": false
+        },
+        "EMAIL_HOST": {
+          "defaultValue": "",
+          "description": "SMTP host for invitations and password resets (Railway allows outbound SMTP on Pro only)",
+          "isOptional": true
+        },
+        "EMAIL_USER": {
+          "defaultValue": "",
+          "description": "SMTP user",
+          "isOptional": true
+        },
+        "EMAIL_PASSWORD": {
+          "defaultValue": "",
+          "description": "SMTP password",
+          "isOptional": true
+        }
+      }
+    },
+    "c72898c2-c994-400e-a1c8-f246ea7ded10": {
+      "icon": "https://devicons.railway.app/i/clickhouse.svg",
+      "name": "ClickHouse",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/nomideusz/openreplay-railway",
+        "rootDirectory": "/clickhouse"
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "variables": {
+        "CLICKHOUSE_USER": {
+          "defaultValue": "openreplay",
+          "description": "ClickHouse user",
+          "isOptional": false
+        },
+        "CLICKHOUSE_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Auto-generated ClickHouse password",
+          "isOptional": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "30",
+          "description": "Time for ClickHouse to flush and shut down cleanly on redeploy",
+          "isOptional": false
+        }
+      },
+      "volumeMounts": {
+        "f94cc262-d2af-4544-9b23-5b114a6a7ef9": {
+          "mountPath": "/var/lib/clickhouse"
+        }
+      }
+    },
+    "dc8a733e-7daa-4005-8eb8-7c02ffb2584f": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/rustfs.svg",
+      "name": "Storage",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/nomideusz/openreplay-railway",
+        "rootDirectory": "/storage"
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "variables": {
+        "RUSTFS_ACCESS_KEY": {
+          "defaultValue": "${{secret(20, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Auto-generated S3 access key",
+          "isOptional": false
+        },
+        "RUSTFS_SECRET_KEY": {
+          "defaultValue": "${{secret(40, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Auto-generated S3 secret key",
+          "isOptional": false
+        }
+      },
+      "volumeMounts": {
+        "a67a7f0a-9513-4d49-8606-5e9dd113e6fe": {
+          "mountPath": "/data"
+        }
+      }
+    },
+    "f93266ea-9898-43a3-9ba0-03f13288c37f": {
+      "icon": "https://devicons.railway.app/i/postgresql.svg",
+      "name": "Postgres",
+      "build": {},
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "ghcr.io/railwayapp-templates/postgres-ssl:17"
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "variables": {
+        "POSTGRES_DB": {
+          "defaultValue": "openreplay",
+          "description": "Database name",
+          "isOptional": false
+        },
+        "POSTGRES_USER": {
+          "defaultValue": "openreplay",
+          "description": "Database user - a superuser, which the schema needs for the pg_trgm and pgcrypto extensions",
+          "isOptional": false
+        },
+        "POSTGRES_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Auto-generated database password",
+          "isOptional": false
+        },
+        "PGDATA": {
+          "defaultValue": "/var/lib/postgresql/data/pgdata",
+          "description": "Data subdirectory - keeps Postgres happy on Railway volumes",
+          "isOptional": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Time for Postgres to shut down cleanly on redeploy",
+          "isOptional": false
+        }
+      },
+      "volumeMounts": {
+        "c1893f75-7027-4a82-9ebe-05dd1608877f": {
+          "mountPath": "/var/lib/postgresql/data"
+        }
+      }
+    },
+    "2999b64f-a340-4704-ae20-e15823b41409": {
+      "icon": "https://devicons.railway.app/i/redis.svg",
+      "name": "Redis",
+      "build": {},
+      "deploy": {
+        "startCommand": "/bin/sh -c \"rm -rf /data/lost+found && exec docker-entrypoint.sh redis-server --requirepass $REDIS_PASSWORD --maxmemory-policy noeviction --appendonly yes --dir /data\"",
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "redis:8.10.2-alpine"
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "variables": {
+        "REDIS_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Auto-generated Redis password",
+          "isOptional": false
+        }
+      },
+      "volumeMounts": {
+        "06ec715e-b7a5-4629-8512-75e4cfe31730": {
+          "mountPath": "/data"
+        }
+      }
+    }
+  }
+}
