@@ -53,7 +53,7 @@ A session appears in the dashboard a few minutes after the visitor leaves, once 
 
 **Not included:** Assist (live co-browsing and calls), the source map reader for de-minified error stack traces, email alerts, Spot (the Chrome extension recorder) and mobile session screenshots. Web session replay, product analytics, dashboards and canvas recording all work without them.
 
-**Memory.** About 650 MB at idle: ClickHouse 250 MB, API 110 MB, Backend 100 MB, Postgres 80 MB, Storage 70 MB. That is more than the Trial plan gives, so deploy on Hobby or above. Usage grows with traffic: plan for more as recordings come in.
+**Memory.** About 1.1 GB with light traffic, as measured on Railway: ClickHouse 300 MB, Backend 290 MB, Postgres 180 MB, API 140 MB, Storage 110 MB, gateway 50 MB. That is more than the Trial plan gives, so deploy on Hobby or above. Usage grows with traffic: plan for more as recordings come in.
 
 **Email.** Invitations and password resets need SMTP. Set `EMAIL_HOST`, `EMAIL_USER` and `EMAIL_PASSWORD` on the API service. Railway only allows outbound SMTP on the Pro plan.
 

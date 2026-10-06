@@ -4,5 +4,6 @@
   "description": "Self-hosted session replay, product analytics and DevTools for your web app",
   "category": "Observability",
   "image": "https://cdn.jsdelivr.net/gh/nomideusz/openreplay-railway/icon.svg",
-  "card_desc": "OpenReplay session replay: watch what users did with console, network and performance data alongside, plus funnels, heatmaps and dashboards, with recordings kept on your own Railway volume."
+  "card_desc": "OpenReplay session replay: watch what users did with console, network and performance data alongside, plus funnels, heatmaps and dashboards, with recordings kept on your own Railway volume.",
+  "id": "6b4d001d-4b30-42fd-bd7d-e179c4c91758"
 }
