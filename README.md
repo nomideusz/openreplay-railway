@@ -1,6 +1,6 @@
 # Deploy and Host OpenReplay on Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/openreplay?utm_medium=integration&utm_source=button&utm_campaign=openreplay)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/openreplay?referralCode=sLjDXb&utm_medium=integration&utm_source=button&utm_campaign=openreplay)
 
 [OpenReplay](https://openreplay.com/) is open-source session replay: watch exactly what a user did in your web app, with the console, network requests, errors and performance data playing alongside. It also does product analytics (funnels, journeys, heatmaps, dashboards). This template runs OpenReplay v1.28.0 on your own Railway project, so recordings never leave your infrastructure.
 
