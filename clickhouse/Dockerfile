@@ -11,6 +11,9 @@ COPY listen.xml /etc/clickhouse-server/config.d/docker_related_config.xml
 # Every statement is IF NOT EXISTS / OR REPLACE, so it runs on every boot:
 # a bumped schema file adds its new tables without a manual migration step.
 COPY init_ch_schema.sql /docker-entrypoint-initdb.d/init_ch_schema.sql
+# Railway hosts run transparent huge pages "always": jemalloc frees 4K pages
+# inside 2 MB huge pages that stay charged, so idle ClickHouse creeps ~25 MB/min.
 ENV CLICKHOUSE_DB=default \
     CLICKHOUSE_USER=openreplay \
-    CLICKHOUSE_ALWAYS_RUN_INITDB_SCRIPTS=1
+    CLICKHOUSE_ALWAYS_RUN_INITDB_SCRIPTS=1 \
+    MALLOC_CONF=thp:never
