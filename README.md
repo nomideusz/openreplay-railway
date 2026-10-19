@@ -29,7 +29,7 @@
 - [OpenReplay documentation](https://docs.openreplay.com/)
 - [Tracker setup guide](https://docs.openreplay.com/en/sdk/)
 - [OpenReplay on GitHub](https://github.com/openreplay/openreplay)
-- [Template source on GitHub](https://github.com/nomideusz/openreplay-railway)
+- [Template source on GitHub](https://github.com/two-workspaces/openreplay)
 
 ### Implementation Details
 
