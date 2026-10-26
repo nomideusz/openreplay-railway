@@ -3,16 +3,16 @@
 # storage uploads them, canvases stages screenshots there. Railway volumes
 # can't be shared between services, so they share a container instead.
 # The http image is the base: it carries the GeoIP and user-agent databases.
-ARG OR_VERSION=v1.28.0
-FROM public.ecr.aws/p1t3u8a3/sink:${OR_VERSION} AS sink
-FROM public.ecr.aws/p1t3u8a3/storage:${OR_VERSION} AS storage
-FROM public.ecr.aws/p1t3u8a3/ender:${OR_VERSION} AS ender
-FROM public.ecr.aws/p1t3u8a3/db:${OR_VERSION} AS db
-FROM public.ecr.aws/p1t3u8a3/assets:${OR_VERSION} AS assets
-FROM public.ecr.aws/p1t3u8a3/canvases:${OR_VERSION} AS canvases
-FROM public.ecr.aws/p1t3u8a3/api:${OR_VERSION} AS api
+# Upstream patches each service on its own (chart AppVersion per service).
+FROM public.ecr.aws/p1t3u8a3/sink:v1.28.1 AS sink
+FROM public.ecr.aws/p1t3u8a3/storage:v1.28.1 AS storage
+FROM public.ecr.aws/p1t3u8a3/ender:v1.28.1 AS ender
+FROM public.ecr.aws/p1t3u8a3/db:v1.28.2 AS db
+FROM public.ecr.aws/p1t3u8a3/assets:v1.28.3 AS assets
+FROM public.ecr.aws/p1t3u8a3/canvases:v1.28.1 AS canvases
+FROM public.ecr.aws/p1t3u8a3/api:v1.28.8 AS api
 
-FROM public.ecr.aws/p1t3u8a3/http:${OR_VERSION}
+FROM public.ecr.aws/p1t3u8a3/http:v1.28.2
 USER root
 # zstd: canvases packs screenshots; psql: schema init; curl: bucket init; bash: wait -n
 RUN apk add --no-cache zstd postgresql17-client curl bash
