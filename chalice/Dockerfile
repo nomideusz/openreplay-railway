@@ -36,6 +36,10 @@ ENV TZ=UTC \
     SKIP_H_BACKENDSERVICES=true \
     SKIP_H_SSL=true
 
+# Backend creates the Postgres schema on first boot; started before that, the
+# API crashes on the missing public.tenants until its restarts run out. Wait.
+COPY wait-schema.py /wait-schema.py
+
 # Upstream binds 0.0.0.0, which Railway's IPv6 private network can't reach.
 # Only CMD is replaced, so upstream's tini ENTRYPOINT stays.
-CMD ["sh", "-c", "exec uvicorn app:app --host :: --port ${LISTEN_PORT} --proxy-headers --log-level ${S_LOGLEVEL:-warning}"]
+CMD ["sh", "-c", "python /wait-schema.py && exec uvicorn app:app --host :: --port ${LISTEN_PORT} --proxy-headers --log-level ${S_LOGLEVEL:-warning}"]
