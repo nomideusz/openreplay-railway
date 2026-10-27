@@ -1,6 +1,6 @@
 # OpenReplay's Python API (/api): login, sign-up, projects, session search and
 # the signed URLs the player uses to fetch recordings.
-FROM public.ecr.aws/p1t3u8a3/chalice:v1.28.13
+FROM ghcr.io/two-workspaces/openreplay-chalice:v1.28.13
 
 # Fixed settings from upstream's docker-envs/chalice.env; connection strings
 # and secrets come from the template's variables.

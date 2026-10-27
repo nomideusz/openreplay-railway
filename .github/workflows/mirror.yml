@@ -1,0 +1,28 @@
+# Copies every OpenReplay image the Dockerfiles pin from public.ecr.aws to
+# ghcr.io/two-workspaces/openreplay-<service>. Railway's builders share IPs,
+# and anonymous ECR pulls 429 when Backend's 8 FROMs resolve at once.
+# To bump: change the tags on a branch, let this run, then merge to main.
+name: Mirror images
+on:
+  push:
+    paths: ["*/Dockerfile", ".github/workflows/mirror.yml"]
+  workflow_dispatch:
+permissions:
+  packages: write
+jobs:
+  mirror:
+    if: github.repository == 'two-workspaces/openreplay'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: imjasonh/setup-crane@v0.4
+      - run: |
+          crane auth login ghcr.io -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
+          grep -ho 'ghcr.io/two-workspaces/openreplay-[a-z]*:v[0-9.]*' */Dockerfile | sort -u | while read -r dst; do
+            if crane digest "$dst" >/dev/null 2>&1; then echo "have $dst"; continue; fi
+            name=${dst#ghcr.io/two-workspaces/openreplay-}
+            for i in 1 2 3 4 5; do
+              crane copy "public.ecr.aws/p1t3u8a3/$name" "$dst" && break
+              [ "$i" = 5 ] && exit 1; sleep $((i * 20))
+            done
+          done
