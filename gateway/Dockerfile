@@ -1,7 +1,7 @@
 # OpenReplay's single public entry point: the dashboard (static files from
 # the upstream frontend image), the tracker ingest endpoint, both APIs and the
 # signed recording downloads, routed over Railway's private network.
-FROM nginx:1.29.3-alpine
+FROM nginx:1.31.8-alpine
 COPY --from=public.ecr.aws/p1t3u8a3/frontend:v1.28.6 /var/www/openreplay /var/www/openreplay
 COPY default.conf.template /etc/nginx/templates/default.conf.template
 RUN rm /etc/nginx/conf.d/default.conf
