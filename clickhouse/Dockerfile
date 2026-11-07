@@ -1,7 +1,7 @@
 # OpenReplay's analytics store. Stock ClickHouse at the version OpenReplay
 # v1.28.0 ships with, plus OpenReplay's schema and one config file that keeps
 # it small (logs to the console, ClickHouse's own metric tables off).
-FROM clickhouse/clickhouse-server:26.2.19.43-alpine
+FROM clickhouse/clickhouse-server:26.10.3.7-alpine
 
 COPY railway.xml /etc/clickhouse-server/config.d/railway.xml
 # The stock file listens on :: and 0.0.0.0; on Railway :: is already
