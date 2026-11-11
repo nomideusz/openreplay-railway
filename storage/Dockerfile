@@ -1,6 +1,6 @@
 # S3-compatible store for recordings (mobs), cached page assets and source
 # maps: RustFS, the same server OpenReplay's own docker-compose install uses.
-FROM rustfs/rustfs:1.0.4
+FROM rustfs/rustfs:1.0.5
 
 # Railway mounts volumes root-owned and with lost+found at the top, which
 # RustFS would list as a bucket: data lives in a subdirectory, and the server
