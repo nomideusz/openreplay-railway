@@ -1,0 +1,9 @@
+The MIT licence in LICENSE covers the files written for this Railway template.
+
+These files come from another project and stay under that project's licence:
+
+- backend/init_pg_schema.sql
+- clickhouse/init_ch_schema.sql
+- gateway/default.conf.template (adapted)
+
+Source: https://github.com/openreplay/openreplay
