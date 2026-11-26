@@ -20,7 +20,7 @@
 ## Dependencies for OpenReplay Hosting
 
 - Postgres 17 (included, private network only)
-- ClickHouse 26.2 (included, private network only)
+- ClickHouse 26.11 (included, private network only)
 - Redis 8 (included, private network only)
 - RustFS S3-compatible object storage (included, private network only, the same server OpenReplay's own install uses)
 
